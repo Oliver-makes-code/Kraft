@@ -1,2 +1,3 @@
 # Kraft
-A kotlin based minecraft client
+A Kotlin based Minecraft client
+Not at all related to Mac 'n Cheese
