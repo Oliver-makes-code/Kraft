@@ -8,19 +8,19 @@ data class Packet(val id: Int, private val data: Data) {
     class Data {
         val data = ArrayList<Byte>()
 
-        fun append(string: String) {
+        operator fun plusAssign(string: String) {
             data.addAll(string.toByteArray().toList())
         }
 
-        fun append(bool: Boolean) {
+        operator fun plusAssign(bool: Boolean) {
             data.add(if (bool) 0x01 else 0x00)
         }
 
-        fun append(int: Int) {
+        operator fun plusAssign(int: Int) {
             data.addAll(VarInt(int).toByteArray().toList())
         }
 
-        fun append(varInt: VarInt) {
+        operator fun plusAssign(varInt: VarInt) {
             data.addAll(varInt.toByteArray().toList())
         }
 

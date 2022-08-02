@@ -23,10 +23,10 @@ class NetworkManager {
         connection = ClientConnection(addr, port)
 
         val packetData = Packet.Data()
-        packetData.append(758) // Protocol version
-        packetData.append(addr)
-        packetData.append(port)
-        packetData.append(nextState.ordinal)
+        packetData += 758 // Protocol version
+        packetData += addr
+        packetData += port
+        packetData += nextState.ordinal
 
         val handshakePacket = Packet(0x00, packetData)
         connection.sendPacket(handshakePacket)
@@ -36,8 +36,8 @@ class NetworkManager {
 
     private fun loginStart(encrypted: Boolean) {
         val packetData = Packet.Data()
-        packetData.append("Test")
-        packetData.append(encrypted)
+        packetData += "Test"
+        packetData += encrypted
 
         val loginStartPacket = Packet(0x00, packetData)
         connection.sendPacket(loginStartPacket)
