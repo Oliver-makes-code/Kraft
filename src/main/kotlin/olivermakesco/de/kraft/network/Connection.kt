@@ -1,6 +1,8 @@
 package olivermakesco.de.kraft.network
 
 import olivermakesco.de.kraft.network.packet.*
+import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
+import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
 import java.net.Socket
 
 class Connection(addr: String, port: Int, private val manager: NetworkManager) {
@@ -35,6 +37,6 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
         val buffer = PacketBuffer(data)
         val packetId = buffer.readInt()
 
-        return PacketRegistry.getClientBoundPacket(manager.networkState, packetId)
+        return PacketRegistry.getClientBoundPacket(manager.networkState, packetId).newInstance(buffer)
     }
 }

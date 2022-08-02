@@ -1,7 +1,7 @@
 package olivermakesco.de.kraft.network.packet.serverbound.login
 
 import olivermakesco.de.kraft.network.packet.PacketBuffer
-import olivermakesco.de.kraft.network.packet.ServerBoundPacket
+import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
 
 class LoginPluginResponsePacket(private val messageId: Int, private val successful: Boolean) : ServerBoundPacket {
     lateinit var data: ByteArray

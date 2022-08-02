@@ -1,9 +1,12 @@
 package olivermakesco.de.kraft.network.packet
 
 import olivermakesco.de.kraft.network.NetworkState
+import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.clientbound.login.*
+import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
 import olivermakesco.de.kraft.network.packet.serverbound.handshake.HandshakePacket
 import olivermakesco.de.kraft.network.packet.serverbound.login.*
+import java.lang.reflect.Constructor
 
 object PacketRegistry {
     private var serverBoundPackets = HashMap<NetworkState, PacketSet<ServerBoundPacket>>()
@@ -17,9 +20,9 @@ object PacketRegistry {
         } ?: throw RuntimeException("Packet id could not be found for packet $packet.")
     }
 
-    fun getClientBoundPacket(state: NetworkState, id: Int): ClientBoundPacket {
+    fun getClientBoundPacket(state: NetworkState, id: Int): Constructor<out ClientBoundPacket> {
         val clazz = clientBoundPackets[state]?.get(id)
-        return clazz?.getDeclaredConstructor()?.newInstance(PacketBuffer::class.java)
+        return clazz?.getDeclaredConstructor(PacketBuffer::class.java)
             ?: throw RuntimeException("$state packet with id $id could not be found.")
     }
 
