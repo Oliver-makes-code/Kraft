@@ -1,4 +1,4 @@
-package olivermakesco.de.kraft.network
+package olivermakesco.de.kraft.network.packet
 
 enum class PacketDirection {
     ServerBound,

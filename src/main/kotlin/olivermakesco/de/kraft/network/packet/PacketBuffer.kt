@@ -1,7 +1,8 @@
-package olivermakesco.de.kraft.network
+package olivermakesco.de.kraft.network.packet
 
 import olivermakesco.de.kraft.network.types.VarInt
-import java.util.*
+import java.util.LinkedList
+import java.util.UUID
 
 class PacketBuffer(): LinkedList<Byte>() {
     constructor(init: ByteArray) : this() {
@@ -17,8 +18,8 @@ class PacketBuffer(): LinkedList<Byte>() {
     }
 
     operator fun plusAssign(short: Short) {
-        this.add((short.toInt() shr 8).toByte())
-        this.add(short.toByte())
+        this += (short.toInt() shr 8).toByte()
+        this += short.toByte()
     }
 
     operator fun plusAssign(int: Int) {
@@ -85,5 +86,19 @@ class PacketBuffer(): LinkedList<Byte>() {
 
 
         return UUID(msb, lsb)
+    }
+
+    fun readByteArray(): ByteArray {
+        return readByteArray(this.size)
+    }
+
+    fun readByteArray(length: Int): ByteArray {
+        val tempBuffer = ByteArray(16)
+
+        for (i in 0 until length) {
+            tempBuffer[i] = this.pop()
+        }
+
+        return tempBuffer
     }
 }

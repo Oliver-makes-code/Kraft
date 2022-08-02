@@ -1,9 +1,10 @@
 package olivermakesco.de.kraft.network
 
+import olivermakesco.de.kraft.network.packet.*
 import java.net.Socket
 
-class ClientConnection(private val addr: String, private val port: Int, private val manager: NetworkManager) {
-    private val socket = Socket(addr, this.port)
+class Connection(addr: String, port: Int, private val manager: NetworkManager) {
+    private val socket = Socket(addr, port)
     private val sendChannel = socket.getOutputStream()
     private val receiveChannel = socket.getInputStream()
 
@@ -11,7 +12,7 @@ class ClientConnection(private val addr: String, private val port: Int, private 
         sendChannel.write(encodePacket(packet))
     }
 
-    fun readPacket(): Packet {
+    fun readPacket(): ClientBoundPacket {
         val length = receiveChannel.read()
         val contents = receiveChannel.readNBytes(length)
 
@@ -20,7 +21,7 @@ class ClientConnection(private val addr: String, private val port: Int, private 
 
     private fun encodePacket(packet: ServerBoundPacket): ByteArray {
         val tempBuffer = PacketBuffer()
-        tempBuffer += manager.networkState.getPacketId(PacketDirection.ServerBound, packet)
+        tempBuffer += PacketRegistry.getId(manager.networkState, packet)
         packet.write(tempBuffer)
 
         val buffer = PacketBuffer()
@@ -30,10 +31,10 @@ class ClientConnection(private val addr: String, private val port: Int, private 
         return buffer.toByteArray()
     }
 
-    private fun decodePacket(data: ByteArray): Packet {
+    private fun decodePacket(data: ByteArray): ClientBoundPacket {
         val buffer = PacketBuffer(data)
-        val packetId = buffer.readVarInt().value
+        val packetId = buffer.readInt()
 
-        return manager.networkState.getPacketById(PacketDirection.ClientBound, packetId.toByte()).getDeclaredConstructor(PacketBuffer::class.java).newInstance(buffer)
+        return PacketRegistry.getClientBoundPacket(manager.networkState, packetId)
     }
 }

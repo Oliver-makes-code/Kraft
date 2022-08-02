@@ -1,6 +1,6 @@
 package olivermakesco.de.kraft.network.types
 
-import olivermakesco.de.kraft.network.PacketBuffer
+import olivermakesco.de.kraft.network.packet.PacketBuffer
 
 class VarInt(var value: Int) {
     fun toByteArray(): ByteArray {

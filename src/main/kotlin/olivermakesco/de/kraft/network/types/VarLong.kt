@@ -1,7 +1,9 @@
 package olivermakesco.de.kraft.network.types
 
+import olivermakesco.de.kraft.network.packet.PacketBuffer
+
 class VarLong(var value: Long) {
-    fun toArray(): ByteArray {
+    fun toByteArray(): ByteArray {
         val bytes = ArrayList<Byte>()
 
         while (value and SEGMENT_BITS.inv() != 0L) {
@@ -19,19 +21,18 @@ class VarLong(var value: Long) {
         private const val SEGMENT_BITS = 0x7FL
         private const val CONTINUE_BIT = 0x80L
 
-        fun fromArray(byteArray: ByteArray): VarLong {
+        fun fromPacketBuffer(packetBuffer: PacketBuffer): VarLong {
             var value = 0L
             var position = 0
 
-            for (b in byteArray) {
-                value = value or (b.toLong() and SEGMENT_BITS) shl position
-
-                if (b.toLong() and CONTINUE_BIT == 0L) break
+            do {
+                val byte = packetBuffer.pop()
+                value = value or ((byte.toLong() and SEGMENT_BITS) shl position)
 
                 position += 7
 
-                if (position >= 32) throw RuntimeException("VarInt is too big")
-            }
+                if (position >= 64) throw RuntimeException("VarInt is too big")
+            } while (packetBuffer.peek().toLong() and CONTINUE_BIT != 0L)
 
             return VarLong(value)
         }
