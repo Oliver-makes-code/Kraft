@@ -1,22 +1,10 @@
 package olivermakesco.de.kraft
 
 import olivermakesco.de.kraft.client.KraftClient
+import olivermakesco.de.kraft.network.types.VarInt
 import java.net.ServerSocket
 
 fun main(args: Array<String>) {
-    Thread{ testServer() }.start()
-
-    val client = KraftClient()
+    val client = KraftClient(758) // 1.18.2
     client.packetTest("localhost")
-}
-
-fun testServer() {
-    val server = ServerSocket(25565)
-    val connection = server.accept()
-
-    while (true) {
-        if (connection.getInputStream().available() > 1) {
-            println(connection.getInputStream().read())
-        }
-    }
 }

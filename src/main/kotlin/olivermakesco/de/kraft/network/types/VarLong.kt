@@ -2,17 +2,17 @@ package olivermakesco.de.kraft.network.types
 
 class VarLong(var value: Long) {
     fun toArray(): ByteArray {
-        val array = ArrayList<Byte>()
+        val bytes = ArrayList<Byte>()
 
         while (value and SEGMENT_BITS.inv() != 0L) {
-            array.add(((value and SEGMENT_BITS) or CONTINUE_BIT).toByte())
+            bytes.add(((value and SEGMENT_BITS) or CONTINUE_BIT).toByte())
 
             value = value shr 7
         }
 
-        array.add(value.toByte())
+        bytes.add(value.toByte())
 
-        return array.toByteArray()
+        return bytes.toByteArray()
     }
 
     companion object {

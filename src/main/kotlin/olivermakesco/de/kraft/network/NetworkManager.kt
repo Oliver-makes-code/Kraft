@@ -1,46 +1,29 @@
 package olivermakesco.de.kraft.network
 
-class NetworkManager {
-    private lateinit var networkState: NetworkState
+import olivermakesco.de.kraft.client.KraftClient
+import olivermakesco.de.kraft.network.packet.HandshakePacket
+import olivermakesco.de.kraft.network.packet.LoginStartPacket
+import olivermakesco.de.kraft.network.packet.LoginSuccessPacket
+
+class NetworkManager(private val client: KraftClient) {
     private lateinit var connection: ClientConnection
+    lateinit var networkState: NetworkState
 
     fun connect(host: String) {
-        val hostParts = parseAddress(host)
+        val (addr, port) = parseAddress(host)
 
-        handshake(hostParts.first, hostParts.second, NetworkState.LOGIN)
-        loginStart(false) // TODO: encryption
-    }
-
-    // TODO: Actually do this at some point
-    fun status(host: String) {
-        val hostParts = parseAddress(host)
-
-        handshake(hostParts.first, hostParts.second, NetworkState.STATUS)
-    }
-
-    private fun handshake(addr: String, port: Int, nextState: NetworkState) {
         networkState = NetworkState.HANDSHAKING
-        connection = ClientConnection(addr, port)
+        connection = ClientConnection(addr, port, this)
+        connection.sendPacket(HandshakePacket(client.version, addr, port, NetworkState.LOGIN))
 
-        val packetData = Packet.Data()
-        packetData += 758 // Protocol version
-        packetData += addr
-        packetData += port
-        packetData += nextState.ordinal
+        networkState = NetworkState.LOGIN
+        connection.sendPacket(LoginStartPacket("Test"))
 
-        val handshakePacket = Packet(0x00, packetData)
-        connection.sendPacket(handshakePacket)
+        val response = connection.readPacket()
 
-        networkState = nextState
-    }
-
-    private fun loginStart(encrypted: Boolean) {
-        val packetData = Packet.Data()
-        packetData += "Test"
-        packetData += encrypted
-
-        val loginStartPacket = Packet(0x00, packetData)
-        connection.sendPacket(loginStartPacket)
+        if (response is LoginSuccessPacket) {
+            println("Successfully logged in as ${response.name}")
+        }
     }
 
     private fun parseAddress(addr: String): Pair<String, Int> {
