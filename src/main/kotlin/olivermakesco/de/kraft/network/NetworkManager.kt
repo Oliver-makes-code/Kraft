@@ -1,17 +1,18 @@
 package olivermakesco.de.kraft.network
 
 import olivermakesco.de.kraft.client.KraftClient
+import olivermakesco.de.kraft.network.packet.clientbound.login.EncryptionRequestPacket
 import olivermakesco.de.kraft.network.packet.serverbound.handshake.HandshakePacket
 import olivermakesco.de.kraft.network.packet.serverbound.login.LoginStartPacket
 import olivermakesco.de.kraft.network.packet.clientbound.login.LoginSuccessPacket
+import olivermakesco.de.kraft.network.packet.clientbound.login.SetCompressionPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.PingPacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.StatusRequestPacket
-import olivermakesco.de.kraft.network.ServerAddress
 
 class NetworkManager(private val client: KraftClient) {
-    private var connection: Connection? = null
+    var connection: Connection? = null
     lateinit var networkState: NetworkState
 
     fun connect(server: ServerAddress) {
@@ -19,12 +20,6 @@ class NetworkManager(private val client: KraftClient) {
 
         networkState = NetworkState.LOGIN
         connection!!.sendPacket(LoginStartPacket("Test"))
-
-        val response = connection!!.readPacket()
-
-        if (response is LoginSuccessPacket) {
-            println("Successfully logged in as ${response.name}.")
-        }
     }
 
     fun getStatus(server: ServerAddress) {
@@ -32,22 +27,11 @@ class NetworkManager(private val client: KraftClient) {
 
         networkState = NetworkState.STATUS
         connection!!.sendPacket(StatusRequestPacket())
-
-        val response = connection!!.readPacket()
-
-        if (response is StatusResponsePacket) {
-            println(response.json)
-            ping()
-        }
     }
 
-    private fun ping() {
-        connection!!.sendPacket(PingPacket(System.currentTimeMillis()))
-
-        val response = connection!!.readPacket()
-
-        if (response is PongPacket) {
-            println("Pong!")
+    fun ping() {
+        if (isConnected()) {
+            connection!!.sendPacket(PingPacket())
         }
     }
 
@@ -55,6 +39,9 @@ class NetworkManager(private val client: KraftClient) {
         networkState = NetworkState.HANDSHAKING
         connection = Connection(host, port, this)
         connection!!.sendPacket(HandshakePacket(client.version, host, port, nextState))
+    }
+
+    fun setupEncryption(requestPacket: EncryptionRequestPacket) {
     }
 
     fun isConnected(): Boolean {
@@ -65,7 +52,10 @@ class NetworkManager(private val client: KraftClient) {
         fun start(manager: NetworkManager) {
             while (true) {
                 if (manager.isConnected() && manager.connection!!.hasPacket()) {
-                    println(manager.connection!!.readPacket().javaClass.simpleName)
+                    val packet = manager.connection!!.readPacket()
+                    packet.handle(manager.client)
+
+                    println("Packet received: ${packet.javaClass.simpleName}")
                 }
 
                 Thread.sleep(100)

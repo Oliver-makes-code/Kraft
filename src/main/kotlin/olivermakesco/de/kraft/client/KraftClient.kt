@@ -5,17 +5,18 @@ import olivermakesco.de.kraft.network.ServerAddress
 
 class KraftClient() {
     val version = 758 // 1.18.2
-    private val networkManager = NetworkManager(this)
+    val networkManager = NetworkManager(this)
     private val networkThread = Thread { NetworkManager.start(networkManager) }
 
     init {
         networkThread.start()
     }
 
-    fun testConnection() {
-        val server = ServerAddress.fromString("10.8.0.2:25565")
+    fun testConnection(address: String) {
+        val server = ServerAddress.fromString(address)
 
         networkManager.getStatus(server)
+        Thread.sleep(500)
         networkManager.connect(server)
     }
 }

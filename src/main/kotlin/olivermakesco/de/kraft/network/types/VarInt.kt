@@ -1,6 +1,7 @@
 package olivermakesco.de.kraft.network.types
 
 import olivermakesco.de.kraft.network.packet.PacketBuffer
+import java.io.InputStream
 
 class VarInt(var value: Int) {
     fun toByteArray(): ByteArray {
@@ -32,7 +33,23 @@ class VarInt(var value: Int) {
                 position += 7
 
                 if (position >= 32) throw RuntimeException("VarInt is too big")
-            } while (packetBuffer.peek().toInt() and CONTINUE_BIT != 0)
+            } while (byte.toInt() and CONTINUE_BIT != 0)
+
+            return VarInt(value)
+        }
+
+        fun fromInputStream(inputStream: InputStream): VarInt {
+            var value = 0
+            var position = 0
+
+            do {
+                val byte = inputStream.read()
+                value = value or ((byte and SEGMENT_BITS) shl position)
+
+                position += 7
+
+                if (position >= 32) throw RuntimeException("VarInt is too big")
+            } while (byte and CONTINUE_BIT != 0)
 
             return VarInt(value)
         }

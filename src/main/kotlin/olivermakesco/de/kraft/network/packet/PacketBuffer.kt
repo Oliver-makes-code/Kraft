@@ -1,5 +1,6 @@
 package olivermakesco.de.kraft.network.packet
 
+import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
 import olivermakesco.de.kraft.network.types.VarInt
 import olivermakesco.de.kraft.registry.Identifier
 import java.nio.ByteBuffer
@@ -52,8 +53,26 @@ class PacketBuffer(): LinkedList<Byte>() {
         this.addAll(packetBuffer)
     }
 
-    fun readBool(): Boolean {
+    operator fun plusAssign(packet: ServerBoundPacket) {
+        packet.write(this)
+    }
+
+    fun pushInt(int: Int) {
+        pushVarInt(VarInt((int)))
+    }
+
+    fun pushVarInt(varInt: VarInt) {
+        for (byte in varInt.toByteArray().reversed()) {
+            this.push(byte)
+        }
+    }
+
+    fun readBoolean(): Boolean {
         return this.pop().toInt() == 0x01
+    }
+
+    fun readByte(): Byte {
+        return this.pop()
     }
 
     fun readInt(): Int {
@@ -99,7 +118,7 @@ class PacketBuffer(): LinkedList<Byte>() {
     }
 
     fun readByteArray(length: Int): ByteArray {
-        val tempBuffer = ByteArray(16)
+        val tempBuffer = ByteArray(length)
 
         for (i in 0 until length) {
             tempBuffer[i] = this.pop()

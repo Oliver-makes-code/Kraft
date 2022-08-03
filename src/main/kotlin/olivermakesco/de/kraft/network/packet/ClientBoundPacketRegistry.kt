@@ -8,13 +8,13 @@ import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.registry.IntegerRegistry
 
-class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManager) -> ClientBoundPacket>() {
+class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState) -> ClientBoundPacket>() {
     companion object {
         val INSTANCE = ClientBoundPacketRegistry()
 
         init {
             INSTANCE[0] = {
-                when (it.networkState) {
+                when (it) {
                     NetworkState.HANDSHAKING -> {
                         error("Received id 0 in handshaking stage")
                     }
@@ -30,7 +30,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
                 }
             }
             INSTANCE[1] = {
-                when (it.networkState) {
+                when (it) {
                     NetworkState.HANDSHAKING -> {
                         error("Received id 1 in handshaking stage")
                     }
@@ -46,7 +46,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
                 }
             }
             INSTANCE[2] = {
-                when (it.networkState) {
+                when (it) {
                     NetworkState.HANDSHAKING -> {
                         error("Received id 2 in handshaking stage")
                     }
@@ -62,7 +62,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
                 }
             }
             INSTANCE[3] = {
-                when (it.networkState) {
+                when (it) {
                     NetworkState.HANDSHAKING -> {
                         error("Received id 3 in handshaking stage")
                     }
@@ -78,7 +78,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
                 }
             }
             INSTANCE[4] = {
-                when (it.networkState) {
+                when (it) {
                     NetworkState.HANDSHAKING -> {
                         error("Received id 4 in handshaking stage")
                     }
