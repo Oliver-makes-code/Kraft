@@ -58,8 +58,6 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
             if (uncompressedLength >= compressionThreshold) {
                 val decompressed = decompressPacket(contents, uncompressedLength)
                 return decodePacket(decompressed)
-            } else {
-                contents.pop()
             }
         }
 

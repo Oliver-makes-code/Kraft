@@ -30,6 +30,8 @@ class VarInt(var value: Int) {
                 val byte = packetBuffer.pop()
                 value = value or ((byte.toInt() and SEGMENT_BITS) shl position)
 
+                if (byte.toInt() and CONTINUE_BIT != 0) break
+
                 position += 7
 
                 if (position >= 32) throw RuntimeException("VarInt is too big")

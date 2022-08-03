@@ -14,7 +14,11 @@ interface ClientBoundPacket: Packet {
             val id = buffer.readInt()
             val action = ClientBoundPacketRegistry.INSTANCE[id]
                 ?: return UnknownClientBoundPacket(buffer, id)
-            return buffer.action(state) ?: UnknownClientBoundPacket(buffer, id)
+            return try {
+                buffer.action(state)
+            } catch (error: NotImplementedError) {
+                UnknownClientBoundPacket(buffer, id)
+            }
         }
     }
 }

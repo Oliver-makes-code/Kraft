@@ -7,7 +7,7 @@ import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.registry.IntegerRegistry
 
-class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState) -> ClientBoundPacket?>() {
+class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState) -> ClientBoundPacket>() {
     companion object {
         val INSTANCE = ClientBoundPacketRegistry()
 
