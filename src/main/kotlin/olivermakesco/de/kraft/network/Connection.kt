@@ -21,6 +21,10 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
         return decodePacket(contents)
     }
 
+    fun hasPacket(): Boolean {
+        return receiveChannel.available() > 0
+    }
+
     private fun encodePacket(packet: ServerBoundPacket): ByteArray {
         val tempBuffer = PacketBuffer()
         tempBuffer += packet.id
