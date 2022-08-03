@@ -1,7 +1,7 @@
 package olivermakesco.de.kraft.client
 
 import olivermakesco.de.kraft.network.NetworkManager
-import olivermakesco.de.kraft.network.types.ServerAddress
+import olivermakesco.de.kraft.network.ServerAddress
 
 class KraftClient() {
     val version = 758 // 1.18.2
@@ -13,7 +13,7 @@ class KraftClient() {
     }
 
     fun testConnection() {
-        val server = ServerAddress("localhost")
+        val server = ServerAddress.fromString("10.8.0.2:25565")
 
         networkManager.getStatus(server)
         networkManager.connect(server)

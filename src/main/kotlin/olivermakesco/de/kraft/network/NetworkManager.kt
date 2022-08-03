@@ -8,7 +8,7 @@ import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.PingPacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.StatusRequestPacket
-import olivermakesco.de.kraft.network.types.ServerAddress
+import olivermakesco.de.kraft.network.ServerAddress
 
 class NetworkManager(private val client: KraftClient) {
     private var connection: Connection? = null

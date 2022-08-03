@@ -1,6 +1,7 @@
 package olivermakesco.de.kraft.network.packet
 
 import olivermakesco.de.kraft.network.types.VarInt
+import olivermakesco.de.kraft.registry.Identifier
 import java.nio.ByteBuffer
 import java.util.LinkedList
 import java.util.UUID
@@ -81,30 +82,16 @@ class PacketBuffer(): LinkedList<Byte>() {
         return String(stringBuffer)
     }
 
+    fun readIdentifier(): Identifier {
+        return Identifier.fromString(readString())
+    }
+
     fun readVarInt(): VarInt {
         return VarInt.fromPacketBuffer(this)
     }
 
     fun readUuid(): UUID {
-        val uuidBuffer = ByteArray(16)
-
-        for (i in 0..15) {
-            uuidBuffer[i] = this.pop()
-        }
-
-        var msb = 0L
-        var lsb = 0L
-
-        for (i in 0..7) {
-            msb = msb shl 8 or (uuidBuffer[i].toInt() and 255).toLong()
-        }
-
-        for (i in 9..15) {
-            lsb = lsb shl 8 or (uuidBuffer[i].toInt() and 255).toLong()
-        }
-
-
-        return UUID(msb, lsb)
+        return UUID(readLong(), readLong())
     }
 
     fun readByteArray(): ByteArray {
