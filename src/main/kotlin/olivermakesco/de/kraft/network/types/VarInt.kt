@@ -26,7 +26,7 @@ class VarInt(var value: Int) {
             var value = 0
             var position = 0
 
-             do {
+            do {
                 val byte = packetBuffer.pop()
                 value = value or ((byte.toInt() and SEGMENT_BITS) shl position)
 

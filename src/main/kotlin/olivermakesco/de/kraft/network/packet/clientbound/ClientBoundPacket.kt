@@ -12,8 +12,9 @@ interface ClientBoundPacket: Packet {
     companion object {
         fun fromBuffer(buffer: PacketBuffer, state: NetworkState): ClientBoundPacket {
             val id = buffer.readInt()
-            val action = ClientBoundPacketRegistry.INSTANCE[id]!!
-            return buffer.action(state)
+            val action = ClientBoundPacketRegistry.INSTANCE[id]
+                ?: return UnknownClientBoundPacket(buffer, id)
+            return buffer.action(state) ?: UnknownClientBoundPacket(buffer, id)
         }
     }
 }

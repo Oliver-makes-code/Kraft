@@ -1,6 +1,5 @@
 package olivermakesco.de.kraft.network.packet
 
-import olivermakesco.de.kraft.network.NetworkManager
 import olivermakesco.de.kraft.network.NetworkState
 import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.clientbound.login.*
@@ -8,7 +7,7 @@ import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.registry.IntegerRegistry
 
-class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState) -> ClientBoundPacket>() {
+class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState) -> ClientBoundPacket?>() {
     companion object {
         val INSTANCE = ClientBoundPacketRegistry()
 

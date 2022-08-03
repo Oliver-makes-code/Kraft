@@ -10,7 +10,7 @@ import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
 import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.PingPacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.StatusRequestPacket
-import olivermakesco.de.kraft.util.Logger
+import olivermakesco.de.kraft.util.logger
 
 class NetworkManager(private val client: KraftClient) {
     var connection: Connection? = null
@@ -56,7 +56,7 @@ class NetworkManager(private val client: KraftClient) {
                     val packet = manager.connection!!.readPacket()
                     packet.handle(manager.client)
 
-                    Logger.debug("Packet received: ${packet.javaClass.simpleName}")
+                    logger.debug("Packet received: ${packet.javaClass.simpleName}")
                 }
 
                 Thread.sleep(100)

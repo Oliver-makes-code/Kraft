@@ -5,5 +5,5 @@ import olivermakesco.de.kraft.client.KraftClient
 fun main(args: Array<String>) {
     val client = KraftClient()
 
-    client.testConnection(args[0])
+    client.testConnection("localhost")
 }

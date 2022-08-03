@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 }
 
 tasks.test {
