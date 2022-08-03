@@ -31,7 +31,7 @@ class VarLong(var value: Long) {
 
                 position += 7
 
-                if (position >= 64) throw RuntimeException("VarInt is too big")
+                if (position >= 64) throw RuntimeException("VarLong is too big")
             } while (packetBuffer.peek().toLong() and CONTINUE_BIT != 0L)
 
             return VarLong(value)

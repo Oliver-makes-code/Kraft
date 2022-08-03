@@ -4,6 +4,8 @@ import olivermakesco.de.kraft.network.NetworkManager
 import olivermakesco.de.kraft.network.NetworkState
 import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.clientbound.login.*
+import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
+import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.registry.IntegerRegistry
 
 class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManager) -> ClientBoundPacket>() {
@@ -17,7 +19,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
                         error("Received id 0 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        TODO()
+                        StatusResponsePacket(this)
                     }
                     NetworkState.LOGIN -> {
                         LoginDisconnectPacket(this)
@@ -33,7 +35,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
                         error("Received id 1 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        TODO()
+                        PongPacket(this)
                     }
                     NetworkState.LOGIN -> {
                         EncryptionRequestPacket(this)
@@ -46,10 +48,10 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
             INSTANCE[2] = {
                 when (it.networkState) {
                     NetworkState.HANDSHAKING -> {
-                        error("Received id 1 in handshaking stage")
+                        error("Received id 2 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        TODO()
+                        error("Received id 2 in handshaking stage")
                     }
                     NetworkState.LOGIN -> {
                         LoginSuccessPacket(this)
@@ -62,10 +64,10 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
             INSTANCE[3] = {
                 when (it.networkState) {
                     NetworkState.HANDSHAKING -> {
-                        error("Received id 1 in handshaking stage")
+                        error("Received id 3 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        TODO()
+                        error("Received id 3 in handshaking stage")
                     }
                     NetworkState.LOGIN -> {
                         SetCompressionPacket(this)
@@ -78,10 +80,10 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkManage
             INSTANCE[4] = {
                 when (it.networkState) {
                     NetworkState.HANDSHAKING -> {
-                        error("Received id 1 in handshaking stage")
+                        error("Received id 4 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        TODO()
+                        error("Received id 4 in handshaking stage")
                     }
                     NetworkState.LOGIN -> {
                         LoginPluginRequestPacket(this)

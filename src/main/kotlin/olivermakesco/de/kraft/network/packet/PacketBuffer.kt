@@ -1,6 +1,7 @@
 package olivermakesco.de.kraft.network.packet
 
 import olivermakesco.de.kraft.network.types.VarInt
+import java.nio.ByteBuffer
 import java.util.LinkedList
 import java.util.UUID
 
@@ -18,12 +19,19 @@ class PacketBuffer(): LinkedList<Byte>() {
     }
 
     operator fun plusAssign(short: Short) {
-        this += (short.toInt() shr 8).toByte()
-        this += short.toByte()
+        val shortBuffer = ByteBuffer.allocate(Short.SIZE_BYTES)
+        shortBuffer.putShort(short)
+        this += shortBuffer.array()
     }
 
     operator fun plusAssign(int: Int) {
         this += VarInt(int)
+    }
+
+    operator fun plusAssign(long: Long) {
+        val longBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
+        longBuffer.putLong(long)
+        this += longBuffer.array()
     }
 
     operator fun plusAssign(string: String) {
@@ -49,6 +57,17 @@ class PacketBuffer(): LinkedList<Byte>() {
 
     fun readInt(): Int {
         return readVarInt().value
+    }
+
+    fun readLong(): Long {
+        val longBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
+
+        for (i in 0 until Long.SIZE_BYTES) {
+            longBuffer.put(this.pop())
+        }
+
+        longBuffer.flip()
+        return longBuffer.long
     }
 
     fun readString(): String {
