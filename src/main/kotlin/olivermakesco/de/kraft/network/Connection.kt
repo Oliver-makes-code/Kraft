@@ -23,7 +23,7 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
 
     private fun encodePacket(packet: ServerBoundPacket): ByteArray {
         val tempBuffer = PacketBuffer()
-        tempBuffer += PacketRegistry.getId(manager.networkState, packet)
+        tempBuffer += packet.id
         packet.write(tempBuffer)
 
         val buffer = PacketBuffer()
@@ -36,7 +36,7 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
     private fun decodePacket(data: ByteArray): ClientBoundPacket {
         val buffer = PacketBuffer(data)
         val packetId = buffer.readInt()
-
-        return PacketRegistry.getClientBoundPacket(manager.networkState, packetId).newInstance(buffer)
+        val action = ClientBoundPacketRegistry.INSTANCE[packetId]!!
+        return buffer.action(manager)
     }
 }
