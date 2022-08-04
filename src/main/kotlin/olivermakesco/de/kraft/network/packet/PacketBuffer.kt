@@ -1,7 +1,9 @@
 package olivermakesco.de.kraft.network.packet
 
 import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
+import olivermakesco.de.kraft.network.types.Position
 import olivermakesco.de.kraft.network.types.VarInt
+import olivermakesco.de.kraft.network.types.VarLong
 import olivermakesco.de.kraft.registry.Identifier
 import java.nio.ByteBuffer
 import java.util.LinkedList
@@ -77,6 +79,17 @@ class PacketBuffer(): LinkedList<Byte>() {
         return this.pop()
     }
 
+    fun readShort(): Short {
+        val shortBuffer = ByteBuffer.allocate(Short.SIZE_BYTES)
+
+        for (i in 0 until Short.SIZE_BYTES) {
+            shortBuffer.put(this.pop())
+        }
+
+        shortBuffer.flip()
+        return shortBuffer.short
+    }
+
     fun readInt(): Int {
         val intBuffer = ByteBuffer.allocate(Int.SIZE_BYTES)
 
@@ -99,6 +112,28 @@ class PacketBuffer(): LinkedList<Byte>() {
         return longBuffer.long
     }
 
+    fun readFloat(): Float {
+        val floatBuffer = ByteBuffer.allocate(Float.SIZE_BYTES)
+
+        for (i in 0 until Float.SIZE_BYTES) {
+            floatBuffer.put(this.pop())
+        }
+
+        floatBuffer.flip()
+        return floatBuffer.float
+    }
+
+    fun readDouble(): Double {
+        val doubleBuffer = ByteBuffer.allocate(Double.SIZE_BYTES)
+
+        for (i in 0 until Double.SIZE_BYTES) {
+            doubleBuffer.put(this.pop())
+        }
+
+        doubleBuffer.flip()
+        return doubleBuffer.double
+    }
+
     fun readString(): String {
         val length = readVarInt().value
         val stringBuffer = ByteArray(length)
@@ -110,12 +145,33 @@ class PacketBuffer(): LinkedList<Byte>() {
         return String(stringBuffer)
     }
 
+    fun readChat(): String {
+        return readString()
+    }
+
     fun readIdentifier(): Identifier {
         return Identifier.fromString(readString())
     }
 
     fun readVarInt(): VarInt {
         return VarInt.fromPacketBuffer(this)
+    }
+
+    fun readVarLong(): VarLong {
+        return VarLong.fromPacketBuffer(this)
+    }
+
+    fun readPosition(): Position {
+        val long = readLong()
+
+        val x = (long shr 38).toInt()
+        val z = (long shr 12).toInt()
+        val y = (long shl 20 shr 20).toInt()
+        return Position(x, y, z)
+    }
+
+    fun readAngle(): Byte {
+        return readByte()
     }
 
     fun readUuid(): UUID {

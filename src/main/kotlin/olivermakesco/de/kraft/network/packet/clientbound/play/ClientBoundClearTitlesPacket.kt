@@ -1,13 +1,13 @@
-package olivermakesco.de.kraft.network.packet.clientbound.status
+package olivermakesco.de.kraft.network.packet.clientbound.play
 
 import olivermakesco.de.kraft.client.KraftClient
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 
-class PongPacket(buffer: PacketBuffer) : ClientBoundPacket {
-    val payload = buffer.readLong()
+class ClientBoundClearTitlesPacket(buffer: PacketBuffer) : ClientBoundPacket {
+    val reset = buffer.readBoolean()
 
     override fun handle(client: KraftClient) {
-        println("Pong!")
+        TODO("Not yet implemented")
     }
 }

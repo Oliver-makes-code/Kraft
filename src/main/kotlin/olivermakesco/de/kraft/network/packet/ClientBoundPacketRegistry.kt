@@ -3,8 +3,8 @@ package olivermakesco.de.kraft.network.packet
 import olivermakesco.de.kraft.network.NetworkState
 import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.clientbound.login.*
-import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
-import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
+import olivermakesco.de.kraft.network.packet.clientbound.status.ClientBoundPongPacket
+import olivermakesco.de.kraft.network.packet.clientbound.status.ClientBoundStatusResponsePacket
 import olivermakesco.de.kraft.registry.IntegerRegistry
 
 class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState) -> ClientBoundPacket>() {
@@ -18,10 +18,10 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState)
                         error("Received id 0 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        StatusResponsePacket(this)
+                        ClientBoundStatusResponsePacket(this)
                     }
                     NetworkState.LOGIN -> {
-                        LoginDisconnectPacket(this)
+                        ClientBoundLoginDisconnectPacket(this)
                     }
                     NetworkState.PLAY -> {
                         TODO()
@@ -34,10 +34,10 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState)
                         error("Received id 1 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        PongPacket(this)
+                        ClientBoundPongPacket(this)
                     }
                     NetworkState.LOGIN -> {
-                        EncryptionRequestPacket(this)
+                        ClientBoundEncryptionRequestPacket(this)
                     }
                     NetworkState.PLAY -> {
                         TODO()
@@ -53,7 +53,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState)
                         error("Received id 2 in status stage")
                     }
                     NetworkState.LOGIN -> {
-                        LoginSuccessPacket(this)
+                        ClientBoundLoginSuccessPacket(this)
                     }
                     NetworkState.PLAY -> {
                         TODO()
@@ -69,7 +69,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState)
                         error("Received id 3 in handshaking stage")
                     }
                     NetworkState.LOGIN -> {
-                        SetCompressionPacket(this)
+                        ClientBoundSetCompressionPacket(this)
                     }
                     NetworkState.PLAY -> {
                         TODO()
@@ -85,7 +85,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState)
                         error("Received id 4 in handshaking stage")
                     }
                     NetworkState.LOGIN -> {
-                        LoginPluginRequestPacket(this)
+                        ClientBoundLoginPluginRequestPacket(this)
                     }
                     NetworkState.PLAY -> {
                         TODO()

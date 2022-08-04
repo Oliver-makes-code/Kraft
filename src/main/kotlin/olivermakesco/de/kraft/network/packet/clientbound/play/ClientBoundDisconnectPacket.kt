@@ -1,14 +1,13 @@
-package olivermakesco.de.kraft.network.packet.clientbound.status
+package olivermakesco.de.kraft.network.packet.clientbound.play
 
 import olivermakesco.de.kraft.client.KraftClient
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 
-class StatusResponsePacket(buffer: PacketBuffer) : ClientBoundPacket {
-    val json = buffer.readString()
+class ClientBoundDisconnectPacket(buffer: PacketBuffer) : ClientBoundPacket {
+    val reason = buffer.readChat()
 
     override fun handle(client: KraftClient) {
-        println(json)
-        client.networkManager.ping()
+        TODO("Not yet implemented")
     }
 }

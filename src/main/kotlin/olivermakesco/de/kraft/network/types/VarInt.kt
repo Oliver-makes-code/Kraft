@@ -3,7 +3,7 @@ package olivermakesco.de.kraft.network.types
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 import java.io.InputStream
 
-class VarInt(var value: Int) {
+data class VarInt(var value: Int) {
     fun toByteArray(): ByteArray {
         val bytes = ArrayList<Byte>()
 

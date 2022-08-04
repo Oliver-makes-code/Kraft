@@ -1,7 +1,7 @@
 package olivermakesco.de.kraft.network
 
 import olivermakesco.de.kraft.client.KraftClient
-import olivermakesco.de.kraft.network.packet.clientbound.login.EncryptionRequestPacket
+import olivermakesco.de.kraft.network.packet.clientbound.login.ClientBoundEncryptionRequestPacket
 import olivermakesco.de.kraft.network.packet.serverbound.handshake.ServerBoundHandshakePacket
 import olivermakesco.de.kraft.network.packet.serverbound.login.ServerBoundLoginStartPacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.ServerBoundPingPacket
@@ -38,7 +38,7 @@ class NetworkManager(private val client: KraftClient) {
         connection!!.sendPacket(ServerBoundHandshakePacket(client.version, host, port, nextState))
     }
 
-    fun setupEncryption(requestPacket: EncryptionRequestPacket) {
+    fun setupEncryption(requestPacket: ClientBoundEncryptionRequestPacket) {
     }
 
     fun isConnected(): Boolean {

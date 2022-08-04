@@ -2,7 +2,7 @@ package olivermakesco.de.kraft.network.types
 
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 
-class VarLong(var value: Long) {
+data class VarLong(var value: Long) {
     fun toByteArray(): ByteArray {
         val bytes = ArrayList<Byte>()
 

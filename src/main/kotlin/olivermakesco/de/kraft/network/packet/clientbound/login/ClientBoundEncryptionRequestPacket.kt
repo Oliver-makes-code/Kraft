@@ -4,7 +4,7 @@ import olivermakesco.de.kraft.client.KraftClient
 import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 
-class EncryptionRequestPacket(buffer: PacketBuffer) : ClientBoundPacket {
+class ClientBoundEncryptionRequestPacket(buffer: PacketBuffer) : ClientBoundPacket {
     val serverId = buffer.readString()
     private val pubKeyLength = buffer.readVarInt().value
     val publicKey = buffer.readByteArray(pubKeyLength)
