@@ -50,7 +50,7 @@ class ClientBoundPacketRegistry: IntegerRegistry<PacketBuffer.(it: NetworkState)
                         error("Received id 2 in handshaking stage")
                     }
                     NetworkState.STATUS -> {
-                        error("Received id 2 in handshaking stage")
+                        error("Received id 2 in status stage")
                     }
                     NetworkState.LOGIN -> {
                         LoginSuccessPacket(this)

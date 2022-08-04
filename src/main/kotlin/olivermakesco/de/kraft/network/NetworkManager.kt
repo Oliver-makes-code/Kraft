@@ -54,6 +54,7 @@ class NetworkManager(private val client: KraftClient) {
             while (true) {
                 if (manager.isConnected() && manager.connection!!.hasPacket()) {
                     val packet = manager.connection!!.readPacket()
+                    logger.debug(manager.networkState.name)
                     packet.handle(manager.client)
 
                     logger.debug("Packet received: ${packet.javaClass.simpleName}")
