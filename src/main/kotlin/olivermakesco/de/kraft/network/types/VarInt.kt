@@ -19,23 +19,22 @@ class VarInt(var value: Int) {
     }
 
     companion object {
-        private const val SEGMENT_BITS = 0x7F
-        private const val CONTINUE_BIT = 0x80
+        private const val SEGMENT_BITS = 0b01111111
+        private const val CONTINUE_BIT = 0b10000000
 
         fun fromPacketBuffer(packetBuffer: PacketBuffer): VarInt {
             var value = 0
             var position = 0
-
             do {
                 val byte = packetBuffer.pop()
                 value = value or ((byte.toInt() and SEGMENT_BITS) shl position)
 
-                if (byte.toInt() and CONTINUE_BIT != 0) break
+                if (byte.toInt() and CONTINUE_BIT == 0) break
 
                 position += 7
 
                 if (position >= 32) throw RuntimeException("VarInt is too big")
-            } while (byte.toInt() and CONTINUE_BIT != 0)
+            } while (true)
 
             return VarInt(value)
         }
@@ -47,6 +46,8 @@ class VarInt(var value: Int) {
             do {
                 val byte = inputStream.read()
                 value = value or ((byte and SEGMENT_BITS) shl position)
+
+                if (byte and CONTINUE_BIT == 0) break
 
                 position += 7
 
