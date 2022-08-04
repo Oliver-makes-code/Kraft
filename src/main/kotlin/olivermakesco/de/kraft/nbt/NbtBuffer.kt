@@ -3,7 +3,10 @@ package olivermakesco.de.kraft.nbt
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.util.*
+import java.util.zip.DeflaterOutputStream
+import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
+import java.util.zip.InflaterInputStream
 
 class NbtBuffer(): LinkedList<Byte>() {
     constructor(init: ByteArray) : this() {
@@ -42,9 +45,25 @@ class NbtBuffer(): LinkedList<Byte>() {
         return byteStream.toByteArray()
     }
 
+    fun zlib(): ByteArray {
+        val data = this.toByteArray()
+        val byteStream = ByteArrayOutputStream(data.size)
+        val zlibStream = DeflaterOutputStream(byteStream)
+        zlibStream.write(data)
+        zlibStream.close()
+        byteStream.close()
+        return byteStream.toByteArray()
+    }
+
     companion object {
-        fun fromGzippedArray(array: ByteArray): NbtBuffer {
-            TODO()
+        fun fromGzippedArray(data: ByteArray): NbtBuffer {
+            val gzipStream = GZIPInputStream(data.inputStream())
+            return NbtBuffer(gzipStream.readAllBytes())
+        }
+
+        fun fromZlibbedArray(data: ByteArray): NbtBuffer {
+            val inflatorStream = InflaterInputStream(data.inputStream())
+            return NbtBuffer(inflatorStream.readAllBytes())
         }
     }
 }
