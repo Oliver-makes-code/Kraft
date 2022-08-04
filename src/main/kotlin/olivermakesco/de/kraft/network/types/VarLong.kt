@@ -18,21 +18,23 @@ class VarLong(var value: Long) {
     }
 
     companion object {
-        private const val SEGMENT_BITS = 0x7FL
-        private const val CONTINUE_BIT = 0x80L
+        private const val SEGMENT_BITS = 0b01111111L
+        private const val CONTINUE_BIT = 0b10000000L
 
         fun fromPacketBuffer(packetBuffer: PacketBuffer): VarLong {
             var value = 0L
             var position = 0
 
-            do {
+            while (true) {
                 val byte = packetBuffer.pop()
                 value = value or ((byte.toLong() and SEGMENT_BITS) shl position)
+
+                if (byte.toLong() and CONTINUE_BIT == 0L) break
 
                 position += 7
 
                 if (position >= 64) throw RuntimeException("VarLong is too big")
-            } while (packetBuffer.peek().toLong() and CONTINUE_BIT != 0L)
+            }
 
             return VarLong(value)
         }

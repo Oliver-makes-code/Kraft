@@ -25,7 +25,7 @@ class VarInt(var value: Int) {
         fun fromPacketBuffer(packetBuffer: PacketBuffer): VarInt {
             var value = 0
             var position = 0
-            do {
+            while (true) {
                 val byte = packetBuffer.pop()
                 value = value or ((byte.toInt() and SEGMENT_BITS) shl position)
 
@@ -34,7 +34,7 @@ class VarInt(var value: Int) {
                 position += 7
 
                 if (position >= 32) throw RuntimeException("VarInt is too big")
-            } while (true)
+            }
 
             return VarInt(value)
         }
@@ -43,7 +43,7 @@ class VarInt(var value: Int) {
             var value = 0
             var position = 0
 
-            do {
+            while (true) {
                 val byte = inputStream.read()
                 value = value or ((byte and SEGMENT_BITS) shl position)
 
@@ -52,7 +52,7 @@ class VarInt(var value: Int) {
                 position += 7
 
                 if (position >= 32) throw RuntimeException("VarInt is too big")
-            } while (byte and CONTINUE_BIT != 0)
+            }
 
             return VarInt(value)
         }
