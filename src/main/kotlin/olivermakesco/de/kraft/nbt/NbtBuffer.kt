@@ -10,10 +10,22 @@ class NbtBuffer(): LinkedList<Byte>() {
         this += init.toList()
     }
 
-    operator fun plusAssign(int: Int) {
-        val intBuffer = ByteBuffer.allocate(Int.SIZE_BYTES)
-        intBuffer.putInt(int)
-        this += intBuffer.array().toList()
+    operator fun plusAssign(number: Int) {
+        val buffer = ByteBuffer.allocate(Int.SIZE_BYTES)
+        buffer.putInt(number)
+        this += buffer.array().toList()
+    }
+
+    operator fun plusAssign(number: Long) {
+        val buffer = ByteBuffer.allocate(Long.SIZE_BYTES)
+        buffer.putLong(number)
+        this += buffer.array().toList()
+    }
+
+    operator fun plusAssign(number: Short) {
+        val buffer = ByteBuffer.allocate(Short.SIZE_BYTES)
+        buffer.putShort(number)
+        this += buffer.array().toList()
     }
 
     operator fun <T : NbtTag<*>> plusAssign(tag: T) {
