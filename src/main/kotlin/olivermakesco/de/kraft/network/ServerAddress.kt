@@ -4,6 +4,7 @@ data class ServerAddress(val host: String, val port: Int) {
     override fun toString(): String {
         return "$host:$port"
     }
+
     companion object {
         fun fromString(string: String): ServerAddress {
             val split = string.split(":")
