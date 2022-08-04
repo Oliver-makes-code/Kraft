@@ -12,6 +12,6 @@ class ClientBoundEncryptionRequestPacket(buffer: PacketBuffer) : ClientBoundPack
     val verifyToken = buffer.readByteArray(verifyTokenLength)
 
     override fun handle(client: KraftClient) {
-        client.networkManager.setupEncryption(this)
+        error("Kraft doesn't support online-mode servers yet")
     }
 }

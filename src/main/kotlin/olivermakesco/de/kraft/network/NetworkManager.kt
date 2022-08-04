@@ -38,9 +38,6 @@ class NetworkManager(private val client: KraftClient) {
         connection!!.sendPacket(ServerBoundHandshakePacket(client.version, host, port, nextState))
     }
 
-    fun setupEncryption(requestPacket: ClientBoundEncryptionRequestPacket) {
-    }
-
     fun isConnected(): Boolean {
         return connection != null
     }
