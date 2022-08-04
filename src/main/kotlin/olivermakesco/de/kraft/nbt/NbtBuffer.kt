@@ -1,6 +1,7 @@
 package olivermakesco.de.kraft.nbt
 
 import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 import java.util.*
 import java.util.zip.GZIPOutputStream
 
@@ -9,8 +10,14 @@ class NbtBuffer(): LinkedList<Byte>() {
         this += init.toList()
     }
 
+    operator fun plusAssign(int: Int) {
+        val intBuffer = ByteBuffer.allocate(Int.SIZE_BYTES)
+        intBuffer.putInt(int)
+        this += intBuffer.array().toList()
+    }
+
     operator fun <T : NbtTag<*>> plusAssign(tag: T) {
-        this += tag.serialize().toList()
+        tag.serialize(this)
     }
 
     fun gzip(): ByteArray {
