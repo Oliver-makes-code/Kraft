@@ -5,8 +5,8 @@ import olivermakesco.de.kraft.network.packet.PacketBuffer
 import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
 import olivermakesco.de.kraft.network.types.VarInt
 
-class HandshakePacket(private val version: Int, private val addr: String, private val port: Int, private val nextState: NetworkState) : ServerBoundPacket {
-    override val id = 0
+class ServerBoundHandshakePacket(private val version: Int, private val addr: String, private val port: Int, private val nextState: NetworkState) : ServerBoundPacket {
+    override val id = 0x00
 
     override fun write(buffer: PacketBuffer) {
         buffer += VarInt(version)

@@ -2,10 +2,10 @@ package olivermakesco.de.kraft.network
 
 import olivermakesco.de.kraft.client.KraftClient
 import olivermakesco.de.kraft.network.packet.clientbound.login.EncryptionRequestPacket
-import olivermakesco.de.kraft.network.packet.serverbound.handshake.HandshakePacket
-import olivermakesco.de.kraft.network.packet.serverbound.login.LoginStartPacket
-import olivermakesco.de.kraft.network.packet.serverbound.status.PingPacket
-import olivermakesco.de.kraft.network.packet.serverbound.status.StatusRequestPacket
+import olivermakesco.de.kraft.network.packet.serverbound.handshake.ServerBoundHandshakePacket
+import olivermakesco.de.kraft.network.packet.serverbound.login.ServerBoundLoginStartPacket
+import olivermakesco.de.kraft.network.packet.serverbound.status.ServerBoundPingPacket
+import olivermakesco.de.kraft.network.packet.serverbound.status.ServerBoundStatusRequestPacket
 import olivermakesco.de.kraft.util.logger
 
 class NetworkManager(private val client: KraftClient) {
@@ -16,26 +16,26 @@ class NetworkManager(private val client: KraftClient) {
         handshake(server.host, server.port, NetworkState.LOGIN)
 
         networkState = NetworkState.LOGIN
-        connection!!.sendPacket(LoginStartPacket("Test"))
+        connection!!.sendPacket(ServerBoundLoginStartPacket("Test"))
     }
 
     fun getStatus(server: ServerAddress) {
         handshake(server.host, server.port, NetworkState.STATUS)
 
         networkState = NetworkState.STATUS
-        connection!!.sendPacket(StatusRequestPacket())
+        connection!!.sendPacket(ServerBoundStatusRequestPacket())
     }
 
     fun ping() {
         if (isConnected()) {
-            connection!!.sendPacket(PingPacket())
+            connection!!.sendPacket(ServerBoundPingPacket())
         }
     }
 
     private fun handshake(host: String, port: Int, nextState: NetworkState) {
         networkState = NetworkState.HANDSHAKING
         connection = Connection(host, port, this)
-        connection!!.sendPacket(HandshakePacket(client.version, host, port, nextState))
+        connection!!.sendPacket(ServerBoundHandshakePacket(client.version, host, port, nextState))
     }
 
     fun setupEncryption(requestPacket: EncryptionRequestPacket) {
