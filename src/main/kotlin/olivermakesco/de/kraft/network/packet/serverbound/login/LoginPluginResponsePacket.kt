@@ -2,6 +2,7 @@ package olivermakesco.de.kraft.network.packet.serverbound.login
 
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 import olivermakesco.de.kraft.network.packet.serverbound.ServerBoundPacket
+import olivermakesco.de.kraft.network.types.VarInt
 
 class LoginPluginResponsePacket(private val messageId: Int, private val successful: Boolean) : ServerBoundPacket {
     override val id = 0x02
@@ -13,7 +14,7 @@ class LoginPluginResponsePacket(private val messageId: Int, private val successf
     }
 
     override fun write(buffer: PacketBuffer) {
-        buffer += messageId
+        buffer += VarInt(messageId)
         buffer += successful
         buffer += data
     }

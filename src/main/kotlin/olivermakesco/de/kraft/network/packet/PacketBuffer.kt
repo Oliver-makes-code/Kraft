@@ -9,11 +9,11 @@ import java.util.UUID
 
 class PacketBuffer(): LinkedList<Byte>() {
     constructor(init: ByteArray) : this() {
-        this.addAll(init.toList())
+        this += init.toList()
     }
 
     operator fun plusAssign(bool: Boolean) {
-        this.add(if (bool) 0x01 else 0x00)
+        this += if (bool) 0x01 else 0x00
     }
 
     operator fun plusAssign(byte: Byte) {
@@ -27,7 +27,9 @@ class PacketBuffer(): LinkedList<Byte>() {
     }
 
     operator fun plusAssign(int: Int) {
-        this += VarInt(int)
+        val intBuffer = ByteBuffer.allocate(Int.SIZE_BYTES)
+        intBuffer.putInt(int)
+        this += intBuffer.array()
     }
 
     operator fun plusAssign(long: Long) {
@@ -57,7 +59,7 @@ class PacketBuffer(): LinkedList<Byte>() {
         packet.write(this)
     }
 
-    fun pushInt(int: Int) {
+    fun pushVarInt(int: Int) {
         pushVarInt(VarInt((int)))
     }
 
@@ -76,7 +78,14 @@ class PacketBuffer(): LinkedList<Byte>() {
     }
 
     fun readInt(): Int {
-        return readVarInt().value
+        val intBuffer = ByteBuffer.allocate(Int.SIZE_BYTES)
+
+        for (i in 0 until Int.SIZE_BYTES) {
+            intBuffer.put(this.pop())
+        }
+
+        intBuffer.flip()
+        return intBuffer.int
     }
 
     fun readLong(): Long {
@@ -91,7 +100,7 @@ class PacketBuffer(): LinkedList<Byte>() {
     }
 
     fun readString(): String {
-        val length = readInt()
+        val length = readVarInt().value
         val stringBuffer = ByteArray(length)
 
         for (i in 0 until length) {

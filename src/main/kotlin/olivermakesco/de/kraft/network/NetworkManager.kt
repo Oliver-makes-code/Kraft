@@ -4,10 +4,6 @@ import olivermakesco.de.kraft.client.KraftClient
 import olivermakesco.de.kraft.network.packet.clientbound.login.EncryptionRequestPacket
 import olivermakesco.de.kraft.network.packet.serverbound.handshake.HandshakePacket
 import olivermakesco.de.kraft.network.packet.serverbound.login.LoginStartPacket
-import olivermakesco.de.kraft.network.packet.clientbound.login.LoginSuccessPacket
-import olivermakesco.de.kraft.network.packet.clientbound.login.SetCompressionPacket
-import olivermakesco.de.kraft.network.packet.clientbound.status.PongPacket
-import olivermakesco.de.kraft.network.packet.clientbound.status.StatusResponsePacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.PingPacket
 import olivermakesco.de.kraft.network.packet.serverbound.status.StatusRequestPacket
 import olivermakesco.de.kraft.util.logger

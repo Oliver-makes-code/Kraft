@@ -5,7 +5,7 @@ import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 
 class LoginPluginRequestPacket(buffer: PacketBuffer) : ClientBoundPacket {
-    val messageId = buffer.readInt()
+    val messageId = buffer.readVarInt().value
     var channel = buffer.readIdentifier()
     var data = buffer.readByteArray()
 

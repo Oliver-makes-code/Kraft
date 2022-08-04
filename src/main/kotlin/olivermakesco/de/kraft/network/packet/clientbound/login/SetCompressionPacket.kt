@@ -5,7 +5,7 @@ import olivermakesco.de.kraft.network.packet.clientbound.ClientBoundPacket
 import olivermakesco.de.kraft.network.packet.PacketBuffer
 
 class SetCompressionPacket(buffer: PacketBuffer) : ClientBoundPacket {
-    val threshold = buffer.readInt()
+    val threshold = buffer.readVarInt().value
 
     override fun handle(client: KraftClient) {
         client.networkManager.connection!!.compressionThreshold = threshold

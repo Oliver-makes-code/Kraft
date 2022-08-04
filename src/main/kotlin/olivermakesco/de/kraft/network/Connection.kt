@@ -31,20 +31,20 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
 
     private fun encodePacket(packet: ServerBoundPacket): ByteArray {
         var contents = PacketBuffer()
-        contents += packet.id
+        contents += VarInt(packet.id)
         contents += packet
 
         if (compressionThreshold > 0) { // Compression enabled
             if (contents.size >= compressionThreshold) { // Over compression threshold
                 val compressedBuffer = compressPacket(contents)
-                compressedBuffer.pushInt(contents.size)
+                compressedBuffer.pushVarInt(contents.size)
                 contents = compressedBuffer
             } else { // Under compression threshold
-                contents.pushInt(0)
+                contents.pushVarInt(0)
             }
         }
 
-        contents.pushInt(contents.size)
+        contents.pushVarInt(contents.size)
 
         return contents.toByteArray()
     }
@@ -53,7 +53,7 @@ class Connection(addr: String, port: Int, private val manager: NetworkManager) {
         var contents = PacketBuffer(data)
 
         if (compressionThreshold > 0) {
-            val uncompressedLength = contents.readInt() // Get uncompressed length
+            val uncompressedLength = contents.readVarInt().value // Get uncompressed length
             if (uncompressedLength >= compressionThreshold) {
                 contents = decompressPacket(contents, uncompressedLength)
             }

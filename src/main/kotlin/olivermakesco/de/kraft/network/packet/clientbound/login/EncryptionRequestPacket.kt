@@ -6,9 +6,9 @@ import olivermakesco.de.kraft.network.packet.PacketBuffer
 
 class EncryptionRequestPacket(buffer: PacketBuffer) : ClientBoundPacket {
     val serverId = buffer.readString()
-    private val pubKeyLength = buffer.readInt()
+    private val pubKeyLength = buffer.readVarInt().value
     val publicKey = buffer.readByteArray(pubKeyLength)
-    private val verifyTokenLength = buffer.readInt()
+    private val verifyTokenLength = buffer.readVarInt().value
     val verifyToken = buffer.readByteArray(verifyTokenLength)
 
     override fun handle(client: KraftClient) {
