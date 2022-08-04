@@ -5,7 +5,7 @@ import olivermakesco.de.kraft.nbt.NbtTag
 import java.util.*
 
 class NbtLongArray() : NbtTag<LinkedList<Long>> {
-    override val id: Byte = 11
+    override val id: Byte = 12
     override var data: LinkedList<Long> = LinkedList()
 
     constructor(init: LongArray) : this() {
