@@ -21,13 +21,13 @@ class KraftWindow(width: Int, height: Int, name: String, private val client: Kra
     private val stack = stackPush()
 
     init {
-        // Errors
+        // *chuckles* I'm in danger
         GLFWErrorCallback.createPrint(System.err).set()
-        // Init glfw
+        // Start glfw
         if (!glfwInit()) error("Unable to init glfw")
         // Make window
         window = glfwCreateWindow(width, height, name, NULL, NULL)
-        // Check if window
+        // Wait, was the window created???
         if (window == NULL) error("Unable to create window")
     }
 
@@ -39,15 +39,20 @@ class KraftWindow(width: Int, height: Int, name: String, private val client: Kra
             glfwSwapInterval(1)
             GL.createCapabilities()
             while (!glfwWindowShouldClose(window)) {
+                // Trivago
                 glBegin(GL_TRIANGLES) {
-                    glVertex2f(0F, 0F)
-                    glVertex2f(1F, 0F)
-                    glVertex2f(0F, 1F)
+                    glVertex3f(0F, 0F, 0F)
+                    glVertex3f(1F, 0F, 1F)
+                    glVertex3f(1F, 0F, 0F)
                 }
 
+                // Swap draw buffers
                 glfwSwapBuffers(window)
+
+                // Run an election
                 glfwPollEvents()
             }
+            // Perfectly balanced, as all things should be.
             glfwDestroyWindow(window)
             glfwTerminate()
             // TODO: halt other running parts of the program before exiting
@@ -56,6 +61,7 @@ class KraftWindow(width: Int, height: Int, name: String, private val client: Kra
         }
     }
 
+    // OpenGL more like OpenGetSomeBitches
     fun glBegin(mode: Int, action: () -> Unit) {
         glBegin(mode)
         action()
