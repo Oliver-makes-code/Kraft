@@ -1,89 +1,86 @@
 package olivermakesco.de.kraft.client.foxtrot.window
 
-import org.lwjgl.glfw.GLFW.*
-import org.lwjgl.system.MemoryUtil.*
-import java.nio.IntBuffer
+import io.github.kgpu.Adapter
+import io.github.kgpu.*
+import io.github.kgpu.kshader.*
+import kotlinx.coroutines.runBlocking
+import olivermakesco.de.kraft.client.KraftClient
 import kotlin.concurrent.thread
 
-// Declare typealias to easily know what it's supposed to be
-typealias GLFWWindow = Long
+class KraftWindow(width: Int, height: Int, name: String, private val client: KraftClient) {
+    private val window = run {
+        Kgpu.init(true)
+        Window()
+    }
+    private val adapter = runBlocking {
+        Kgpu.requestAdapterAsync(window)
+    }
+    private val device = runBlocking {
+        adapter.requestDeviceAsync()
+    }
+    private val testVertex = runBlocking {
+        KShader.init()
+        device.createShaderModule(KShader.compile("test.vert", javaClass.getResource("/assets/shaders/test.vert")!!.readText(), KShaderType.VERTEX))
+    }
+    private val testFragment = runBlocking {
+        device.createShaderModule(KShader.compile("test.vert", javaClass.getResource("/assets/shaders/test.frag")!!.readText(), KShaderType.FRAGMENT))
+    }
 
-class KraftWindow(width: Int, height: Int, name: String) {
-    val mainPointer = IntBuffer.allocate(1)
-    val garbagePointer = IntBuffer.allocate(1)
+    private val pipelineLayout = device.createPipelineLayout(PipelineLayoutDescriptor())
 
-    // Width getter/setter
-    var width: Int
-        get() {
-            // Write to the buffer
-            glfwGetWindowSize(window, mainPointer, garbagePointer)
-            // Return the value from the buffer
-            return mainPointer[0]
-        }
-        set(value) {
-            // Set the width and height
-            glfwSetWindowSize(window, value, height)
-        }
-    // Width getter/setter
-    var height: Int
-        get() {
-            // Write to the buffer
-            glfwGetWindowSize(window, garbagePointer, mainPointer)
-            // Return the value from the buffer
-            return mainPointer[0]
-        }
-        set(value) {
-            // Set the width and height
-            glfwSetWindowSize(window, width, value)
-        }
-    // Internal variable to store window name
-    internal var internalName: String = ""
-    // Window name getter/setter
-    var name: String
-        get() {
-            // Return internal window name
-            return internalName
-        }
-        set(value) {
-            // Set internal window name
-            internalName = value
-            // Set actual window name
-            glfwSetWindowTitle(window, value)
-        }
+    private val pipelineDesc = RenderPipelineDescriptor(
+        pipelineLayout,
+        ProgrammableStageDescriptor(testVertex, "main"),
+        ProgrammableStageDescriptor(testFragment, "main"),
+        PrimitiveTopology.TRIANGLE_LIST,
+        RasterizationStateDescriptor(),
+        arrayOf(
+            ColorStateDescriptor(
+                TextureFormat.BGRA8_UNORM,
+                BlendDescriptor(),
+                BlendDescriptor(),
+                0xF
+            )
+        ),
+        Kgpu.undefined,
+        VertexStateDescriptor(null),
+        1,
+        0xFFFFFFFF,
+        false
+    )
 
-    val window: GLFWWindow
+    private val pipeline = device.createRenderPipeline(pipelineDesc)
+
+    private val swapchainDesc = SwapChainDescriptor(device, TextureFormat.BGRA8_UNORM)
+
+    var swapchain = window.configureSwapChain(swapchainDesc)
 
     init {
-        // Init glfw
-        glfwInit()
-
-        // No more OpenGL! No more context! No more OpenGl context!
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
-
-        // Store window name
-        internalName = name
-
-        // Create window
-        window = glfwCreateWindow(width, height, name, NULL, NULL)
+        window.onResize = {
+            swapchain = window.configureSwapChain(swapchainDesc)
+        }
     }
 
     fun startThread() {
-        // Starts thread to handle window events
         thread(name="Rendering") {
-            // Check if window should close
-            while (!glfwWindowShouldClose(window)) {
-                // Poll glfw events
-                glfwPollEvents()
-                // TODO: Render things here
+            Kgpu.runLoop(window) {
+                val swapChainTexture = swapchain.getCurrentTextureView();
+                val cmdEncoder = device.createCommandEncoder();
+
+                val colorAttachment = RenderPassColorAttachmentDescriptor(swapChainTexture, Color.WHITE)
+                val renderPassEncoder = cmdEncoder.beginRenderPass(RenderPassDescriptor(colorAttachment))
+                renderPassEncoder.setPipeline(pipeline)
+                renderPassEncoder.draw(3, 1)
+                renderPassEncoder.endPass()
+
+                val cmdBuffer = cmdEncoder.finish()
+                val queue = device.getDefaultQueue()
+                queue.submit(cmdBuffer)
+                swapchain.present();
             }
-            // Window should close now, so kill it
-            destroy()
         }
     }
 
     fun destroy() {
-        // Kill window and glfw
-        glfwDestroyWindow(window)
-        glfwTerminate()
     }
 }

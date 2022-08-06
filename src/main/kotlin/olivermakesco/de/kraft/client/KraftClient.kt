@@ -9,7 +9,7 @@ class KraftClient {
     val version = 758 // 1.18.2
     val networkManager = NetworkManager(this)
     private val networkThread = thread(name="Networking") { NetworkManager.start(networkManager) }
-    val window = KraftWindow(320, 240, "Kraft")
+    private val window = KraftWindow(320, 240, "Kraft", this)
 
     init {
         window.startThread()
