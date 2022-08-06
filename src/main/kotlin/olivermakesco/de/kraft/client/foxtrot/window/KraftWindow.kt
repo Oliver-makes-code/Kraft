@@ -1,90 +1,64 @@
 package olivermakesco.de.kraft.client.foxtrot.window
 
-import io.github.kgpu.*
-import io.github.kgpu.kshader.*
-import kotlinx.coroutines.runBlocking
 import olivermakesco.de.kraft.client.KraftClient
+import org.lwjgl.glfw.*
+import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT
+import org.lwjgl.system.MemoryStack.*
+import org.lwjgl.system.MemoryUtil.*
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
+
+
+// Type alias' to know which variables mean what
+typealias Window = Long
 
 class KraftWindow(width: Int, height: Int, name: String, private val client: KraftClient) {
-    private val window = run {
-        Kgpu.init(true)
-        Window()
-    }
-    private val adapter = runBlocking {
-        Kgpu.requestAdapterAsync(window)
-    }
-    private val device = runBlocking {
-        adapter.requestDeviceAsync()
-    }
-    private val testVertex = runBlocking {
-        KShader.init()
-        device.createShaderModule(KShader.compile("test.vert", javaClass.getResource("/assets/shaders/test.vert")!!.readText(), KShaderType.VERTEX))
-    }
-    private val testFragment = runBlocking {
-        device.createShaderModule(KShader.compile("test.vert", javaClass.getResource("/assets/shaders/test.frag")!!.readText(), KShaderType.FRAGMENT))
-    }
-
-    private val pipelineLayout = device.createPipelineLayout(PipelineLayoutDescriptor())
-
-    private val pipelineDesc = RenderPipelineDescriptor(
-        pipelineLayout,
-        ProgrammableStageDescriptor(testVertex, "main"),
-        ProgrammableStageDescriptor(testFragment, "main"),
-        PrimitiveTopology.TRIANGLE_LIST,
-        RasterizationStateDescriptor(),
-        arrayOf(
-            ColorStateDescriptor(
-                TextureFormat.BGRA8_UNORM,
-                BlendDescriptor(),
-                BlendDescriptor(),
-                0xF
-            )
-        ),
-        Kgpu.undefined,
-        VertexStateDescriptor(null),
-        1,
-        0xFFFFFFFF,
-        false
-    )
-
-    private val pipeline = device.createRenderPipeline(pipelineDesc)
-
-    private val swapchainDesc = SwapChainDescriptor(device, TextureFormat.BGRA8_UNORM)
-
-    var swapchain = window.configureSwapChain(swapchainDesc)
+    private val window: Window
+    private val stack = stackPush()
 
     init {
-        window.onResize = {
-            swapchain = window.configureSwapChain(swapchainDesc)
-        }
+        // Errors
+        GLFWErrorCallback.createPrint(System.err).set()
+        // Init glfw
+        if (!glfwInit()) error("Unable to init glfw")
+        // Make window
+        window = glfwCreateWindow(width, height, name, NULL, NULL)
+        // Check if window
+        if (window == NULL) error("Unable to create window")
     }
 
     fun startThread() {
         thread(name="Rendering") {
-            val vertices = floatArrayOf(
-                -.5f, .5f, 0f, 1f, 0f, 0f,
-                .5f, .5f, 0f, 0f, 1f, 0f,
-                0f, -.5f, 0f, 0f, 0f, 1f
-            )
-            val buffer = BufferUtils.createFloatBuffer(device, "vertices", vertices, BufferUsage.VERTEX)
+            // Make window current
+            glfwMakeContextCurrent(window)
+            // Enable v-sync TODO: make this toggleable
+            glfwSwapInterval(1)
+            GL.createCapabilities()
+            while (!glfwWindowShouldClose(window)) {
+                glBegin(GL_TRIANGLES) {
+                    glVertex2f(0F, 0F)
+                    glVertex2f(1F, 0F)
+                    glVertex2f(0F, 1F)
+                }
 
-            Kgpu.runLoop(window) {
-                val swapChainTexture = swapchain.getCurrentTextureView()
-                val cmdEncoder = device.createCommandEncoder()
-
-                val colorAttachment = RenderPassColorAttachmentDescriptor(swapChainTexture, Color.WHITE)
-                val renderPassEncoder = cmdEncoder.beginRenderPass(RenderPassDescriptor(colorAttachment))
-                renderPassEncoder.setPipeline(pipeline)
-                renderPassEncoder.setVertexBuffer(0, buffer)
-                renderPassEncoder.draw(3, 1)
-                renderPassEncoder.endPass()
-
-                val cmdBuffer = cmdEncoder.finish()
-                val queue = device.getDefaultQueue()
-                queue.submit(cmdBuffer)
-                swapchain.present()
+                glfwSwapBuffers(window)
+                glfwPollEvents()
             }
+            glfwDestroyWindow(window)
+            glfwTerminate()
+            // TODO: halt other running parts of the program before exiting
+
+            exitProcess(0)
         }
+    }
+
+    fun glBegin(mode: Int, action: () -> Unit) {
+        glBegin(mode)
+        action()
+        glEnd()
     }
 }
