@@ -62,20 +62,28 @@ class KraftWindow(width: Int, height: Int, name: String, private val client: Kra
 
     fun startThread() {
         thread(name="Rendering") {
+            val vertices = floatArrayOf(
+                -.5f, .5f, 0f, 1f, 0f, 0f,
+                .5f, .5f, 0f, 0f, 1f, 0f,
+                0f, -.5f, 0f, 0f, 0f, 1f
+            )
+            val buffer = BufferUtils.createFloatBuffer(device, "vertices", vertices, BufferUsage.VERTEX)
+
             Kgpu.runLoop(window) {
-                val swapChainTexture = swapchain.getCurrentTextureView();
-                val cmdEncoder = device.createCommandEncoder();
+                val swapChainTexture = swapchain.getCurrentTextureView()
+                val cmdEncoder = device.createCommandEncoder()
 
                 val colorAttachment = RenderPassColorAttachmentDescriptor(swapChainTexture, Color.WHITE)
                 val renderPassEncoder = cmdEncoder.beginRenderPass(RenderPassDescriptor(colorAttachment))
                 renderPassEncoder.setPipeline(pipeline)
+                renderPassEncoder.setVertexBuffer(0, buffer)
                 renderPassEncoder.draw(3, 1)
                 renderPassEncoder.endPass()
 
                 val cmdBuffer = cmdEncoder.finish()
                 val queue = device.getDefaultQueue()
                 queue.submit(cmdBuffer)
-                swapchain.present();
+                swapchain.present()
             }
         }
     }
