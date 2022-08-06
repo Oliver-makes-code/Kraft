@@ -14,6 +14,8 @@ class KraftClient {
     fun testConnection(address: String) {
         val server = ServerAddress.fromString(address)
 
+        window.startThread()
+
         networkManager.getStatus(server)
         Thread.sleep(500)
         networkManager.connect(server)
