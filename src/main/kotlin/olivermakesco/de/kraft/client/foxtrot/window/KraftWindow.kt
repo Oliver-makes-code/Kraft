@@ -1,6 +1,5 @@
 package olivermakesco.de.kraft.client.foxtrot.window
 
-import io.github.kgpu.Adapter
 import io.github.kgpu.*
 import io.github.kgpu.kshader.*
 import kotlinx.coroutines.runBlocking
@@ -79,8 +78,5 @@ class KraftWindow(width: Int, height: Int, name: String, private val client: Kra
                 swapchain.present();
             }
         }
-    }
-
-    fun destroy() {
     }
 }
