@@ -9,15 +9,16 @@ import kotlin.concurrent.thread
 typealias GLFWWindow = Long
 
 class KraftWindow(width: Int, height: Int, name: String) {
+    val mainPointer = IntBuffer.allocate(1)
+    val garbagePointer = IntBuffer.allocate(1)
+
     // Width getter/setter
     var width: Int
         get() {
-            // Create a buffer with length of 1
-            val wBuffer = IntBuffer.allocate(1)
             // Write to the buffer
-            glfwGetWindowSize(window, wBuffer, IntBuffer.allocate(1))
+            glfwGetWindowSize(window, mainPointer, garbagePointer)
             // Return the value from the buffer
-            return wBuffer[0]
+            return mainPointer[0]
         }
         set(value) {
             // Set the width and height
@@ -26,12 +27,10 @@ class KraftWindow(width: Int, height: Int, name: String) {
     // Width getter/setter
     var height: Int
         get() {
-            // Create a buffer with length of 1
-            val hBuffer = IntBuffer.allocate(1)
             // Write to the buffer
-            glfwGetWindowSize(window, IntBuffer.allocate(1), hBuffer)
+            glfwGetWindowSize(window, garbagePointer, mainPointer)
             // Return the value from the buffer
-            return hBuffer[0]
+            return mainPointer[0]
         }
         set(value) {
             // Set the width and height
