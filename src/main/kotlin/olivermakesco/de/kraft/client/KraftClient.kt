@@ -11,10 +11,12 @@ class KraftClient {
     private val networkThread = thread(name="Networking") { NetworkManager.start(networkManager) }
     val window = KraftWindow(320, 240, "Kraft")
 
+    init {
+        window.startThread()
+    }
+
     fun testConnection(address: String) {
         val server = ServerAddress.fromString(address)
-
-        window.startThread()
 
         networkManager.getStatus(server)
         Thread.sleep(500)
